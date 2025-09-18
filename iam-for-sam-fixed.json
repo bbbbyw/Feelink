@@ -1,0 +1,23 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "IAMForSamAndCFN",
+      "Effect": "Allow",
+      "Action": [
+        "iam:CreateRole",
+        "iam:PassRole",
+        "iam:AttachRolePolicy",
+        "iam:DetachRolePolicy",
+        "iam:PutRolePolicy",
+        "iam:DeleteRolePolicy",
+        "iam:UpdateAssumeRolePolicy",
+        "iam:GetRole",
+        "iam:DeleteRole",
+        "iam:TagRole",
+        "iam:UntagRole"
+      ],
+      "Resource": "*"
+    }
+  ]
+}

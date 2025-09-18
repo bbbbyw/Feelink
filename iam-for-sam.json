@@ -1,0 +1,1 @@
+{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Sid":"AllowCreateAndManageCiRoles","Resource":"arn:aws:iam::/feelink-stack-ci-*","Action":["iam:CreateRole","iam:TagRole","iam:UntagRole","iam:PassRole","iam:AttachRolePolicy","iam:DetachRolePolicy","iam:PutRolePolicy","iam:DeleteRolePolicy","iam:GetRole","iam:UpdateAssumeRolePolicy","iam:DeleteRole"]}]}

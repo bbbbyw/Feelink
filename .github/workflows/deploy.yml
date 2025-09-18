@@ -20,7 +20,7 @@ jobs:
         with:
           node-version: 18
       - name: Install & Build
-        working-directory: frontend
+        working-directory: feelink/frontend
         env:
           NEXT_PUBLIC_API_URL: ${{ vars.API_URL }}
         run: |
@@ -32,7 +32,7 @@ jobs:
           role-to-assume: ${{ vars.AWS_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
       - name: Sync to S3
-        run: aws s3 sync frontend/out s3://${{ vars.S3_BUCKET }} --delete
+        run: aws s3 sync feelink/frontend/out s3://${{ vars.S3_BUCKET }} --delete
       - name: Invalidate CloudFront
         run: aws cloudfront create-invalidation --distribution-id ${{ vars.CLOUDFRONT_DISTRIBUTION_ID }} --paths "/*"
 
@@ -48,7 +48,7 @@ jobs:
         with:
           node-version: 18
       - name: Install backend deps
-        working-directory: backend
+        working-directory: feelink/backend
         run: npm ci
       - name: Install SAM CLI
         run: |
@@ -60,9 +60,9 @@ jobs:
           role-to-assume: ${{ vars.AWS_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
       - name: SAM build
-        working-directory: backend
+        working-directory: feelink/backend
         run: sam build
       - name: SAM deploy
-        working-directory: backend
+        working-directory: feelink/backend
         run: |
           sam deploy --stack-name feelink-stack-ci --no-confirm-changeset --capabilities CAPABILITY_IAM --region ${{ env.AWS_REGION }}

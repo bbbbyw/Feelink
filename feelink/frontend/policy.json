@@ -1,0 +1,19 @@
+{
+    "Version":  "2012-10-17",
+    "Statement":  [
+                      {
+                          "Action":  "s3:GetObject",
+                          "Condition":  {
+                                            "StringEquals":  {
+                                                                 "AWS:SourceArn":  "arn:aws:cloudfront::606635532554:distribution/E3NOT96BN00WC5"
+                                                             }
+                                        },
+                          "Principal":  {
+                                            "Service":  "cloudfront.amazonaws.com"
+                                        },
+                          "Resource":  "arn:aws:s3:::feelinkfrontendbucketbyw/*",
+                          "Effect":  "Allow",
+                          "Sid":  "AllowCloudFrontOACRead"
+                      }
+                  ]
+}

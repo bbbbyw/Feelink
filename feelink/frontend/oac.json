@@ -1,0 +1,6 @@
+{
+  "Name": "feelink-oac",
+  "SigningProtocol": "sigv4",
+  "SigningBehavior": "always",
+  "OriginAccessControlOriginType": "s3"
+}

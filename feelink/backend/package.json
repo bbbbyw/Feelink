@@ -1,0 +1,16 @@
+{
+  "name": "feelink-backend",
+  "version": "1.0.0",
+  "private": true,
+  "type": "commonjs",
+  "main": "src/app.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "node src/app.js",
+    "test": "echo \"No tests yet\" && exit 0"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.1579.0",
+    "sentiment": "^5.0.2"
+  }
+} 

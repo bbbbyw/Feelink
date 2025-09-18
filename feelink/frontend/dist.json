@@ -1,0 +1,53 @@
+{
+    "CallerReference":  "feelink-1758199101",
+    "Comment":  "Feelink static site",
+    "Enabled":  true,
+    "Origins":  {
+                    "Quantity":  1,
+                    "Items":  [
+                                  {
+                                      "S3OriginConfig":  {
+                                                             "OriginAccessIdentity":  ""
+                                                         },
+                                      "OriginAccessControlId":  "E1TJVSSIZ2Y4XB",
+                                      "Id":  "s3-origin",
+                                      "DomainName":  "feelinkfrontendbucketbyw.s3.ap-southeast-2.amazonaws.com"
+                                  }
+                              ]
+                },
+    "DefaultCacheBehavior":  {
+                                 "ForwardedValues":  {
+                                                         "Cookies":  {
+                                                                         "Forward":  "none"
+                                                                     },
+                                                         "QueryString":  false
+                                                     },
+                                 "MinTTL":  0,
+                                 "MaxTTL":  600,
+                                 "Compress":  true,
+                                 "ViewerProtocolPolicy":  "redirect-to-https",
+                                 "TargetOriginId":  "s3-origin",
+                                 "AllowedMethods":  {
+                                                        "Quantity":  2,
+                                                        "Items":  [
+                                                                      "GET",
+                                                                      "HEAD"
+                                                                  ],
+                                                        "CachedMethods":  {
+                                                                              "Quantity":  2,
+                                                                              "Items":  [
+                                                                                            "GET",
+                                                                                            "HEAD"
+                                                                                        ]
+                                                                          }
+                                                    },
+                                 "DefaultTTL":  300
+                             },
+    "DefaultRootObject":  "index.html",
+    "PriceClass":  "PriceClass_100",
+    "ViewerCertificate":  {
+                              "CloudFrontDefaultCertificate":  true
+                          },
+    "HttpVersion":  "http2",
+    "IsIPV6Enabled":  true
+}

@@ -32,7 +32,7 @@ export default function Home() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: '#0ea5a4', padding: 20 }}>
+    <div style={{ minHeight: '100vh', background: '#cc64c7', padding: 20 }}>
       <div style={{ maxWidth: 720, margin: '0 auto', background: '#fff', borderRadius: 8, padding: 20 }}>
         <h1>Feelink</h1>
         <div style={{ height: 320, overflow: 'auto', border: '1px solid #eee', padding: 10 }}>

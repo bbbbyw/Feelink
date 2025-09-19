@@ -1,34 +1,65 @@
-const STORAGE_KEY = "feelinkJournal";
+const STORAGE_KEY = "feelink_mood_history";
 
-export function loadEntries() {
-  if (typeof window === "undefined") return [];
+export function saveMood(entry) {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : [];
-  } catch {
+    const existing = getMoods();
+    const index = existing.findIndex(e => e.date === entry.date);
+    
+    if (index >= 0) {
+      existing[index] = { ...existing[index], ...entry };
+    } else {
+      existing.push(entry);
+    }
+    
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(existing));
+    return true;
+  } catch (error) {
+    console.error('Failed to save mood:', error);
+    return false;
+  }
+}
+
+export function getMoods() {
+  try {
+    const data = localStorage.getItem(STORAGE_KEY);
+    return data ? JSON.parse(data) : [];
+  } catch (error) {
+    console.error('Failed to load moods:', error);
     return [];
   }
 }
 
-export function saveEntries(entries) {
-  if (typeof window === "undefined") return;
+export function updateMood(date, patch) {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
-  } catch {}
+    const moods = getMoods();
+    const index = moods.findIndex(e => e.date === date);
+    
+    if (index >= 0) {
+      moods[index] = { ...moods[index], ...patch };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(moods));
+      return true;
+    }
+    return false;
+  } catch (error) {
+    console.error('Failed to update mood:', error);
+    return false;
+  }
 }
 
-export function upsertEntryByDate(dateStr, entry) {
-  const list = loadEntries();
-  const idx = list.findIndex(e => e.date === dateStr);
-  if (idx >= 0) list[idx] = { ...list[idx], ...entry };
-  else list.push(entry);
-  saveEntries(list);
-  return list;
+export function getToday() {
+  const today = new Date().toISOString().slice(0, 10);
+  const moods = getMoods();
+  return moods.find(e => e.date === today) || null;
 }
 
-export function addEntry(entry) {
-  const list = loadEntries();
-  list.push(entry);
-  saveEntries(list);
-  return list;
+export function deleteMood(date) {
+  try {
+    const moods = getMoods();
+    const filtered = moods.filter(e => e.date !== date);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(filtered));
+    return true;
+  } catch (error) {
+    console.error('Failed to delete mood:', error);
+    return false;
+  }
 } 

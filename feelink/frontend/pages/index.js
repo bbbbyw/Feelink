@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { saveMood, getMoods, updateMood, getToday, deleteMood } from '../lib/storage';
+import { saveMood, getMoods, updateMood, getToday, deleteMood } from '../src/lib/storage';
 
 export default function Home() {
   // Chat state
@@ -118,11 +118,11 @@ export default function Home() {
 
   const getEmotionEmoji = (emotion) => {
     const emojis = {
-      happy: '��',
-      sad: '��',
-      anxious: '��',
-      angry: '��',
-      neutral: '��'
+      happy: '🤗',
+      sad: '😢',
+      anxious: '😰',
+      angry: '😠',
+      neutral: '😐'
     };
     return emojis[emotion] || '😐';
   };

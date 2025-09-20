@@ -1,1 +1,10 @@
 @import "tailwindcss";
+
+/* Apply Fredoka font globally */
+html, body {
+  font-family: 'Fredoka', sans-serif;
+}
+
+* {
+  font-family: inherit;
+}

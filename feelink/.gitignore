@@ -3,6 +3,7 @@ frontend/.next
 backend/node_modules
 .aws-sam
 .env
+.env.local
 .DS_Store 
 # Ignore infra files/dirs
 Infra/

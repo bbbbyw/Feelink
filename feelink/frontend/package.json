@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "tw": "tailwindcss -i ./src/input.css -o ./src/output.css --min",
+    "tw:watch": "tailwindcss -i ./src/input.css -o ./src/output.css --watch",
     "build": "npm run tw && next build",
     "start": "next start"
   },

@@ -9,6 +9,20 @@ html, body {
   font-family: inherit;
 }
 
+/* Force hero heading sizes using a custom utility to avoid conflicts */
+@layer utilities {
+  .hero-title {
+    font-size: 3.75rem; /* 6xl */
+    line-height: 1;
+  }
+  @media (min-width: 768px) {
+    .hero-title {
+      font-size: 6rem; /* 8xl */
+      line-height: 1;
+    }
+  }
+}
+
 /* Chatbox speech bubble tail */
 .chatbox-speech-bubble {
   position: relative;

@@ -201,7 +201,7 @@ export default function Home() {
       )}
         {/* Header */}
         <div className="text-center py-8 absolute top-4 left-1/2 right-0 translate-x-[-50%] z-10">
-          <h1 className="text-6xl md:text-8xl font-bold text-pink-500 mb-4"  >
+          <h1 className="hero-title font-bold text-pink-500 mb-4"  >
             FEELINK
           </h1>
           <p className="text-md md:text-lg text-gray-500 max-w-2xl mx-auto"  >

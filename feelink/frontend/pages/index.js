@@ -195,7 +195,7 @@ export default function Home() {
     <div className="min-h-screen bg-gradient-to-br from-yellow-100 via-pink-100 to-purple-100">
       {/* Toast */}
       {toast && (
-        <div className="fixed top-4 right-4 bg-white border border-gray-200 rounded-lg px-4 py-2 shadow-lg z-50 animate-pulse">
+        <div className="fixed top-4 right-4 bg-white border border-gray-200 rounded-lg px-4 py-2 shadow-lg z-100 animate-pulse">
           {toast}
         </div>
       )}
@@ -229,7 +229,7 @@ export default function Home() {
               <img 
                 src="/decorations/ChatBot-purple.png" 
                 alt="Purple ChatBot character" 
-                className="w-55 h-55 object-contain hover:scale-105"
+                className="w-55 h-55 object-contain u-transition-transform u-hover-scale-105"
               />
             </div>
 
@@ -276,7 +276,7 @@ export default function Home() {
                 <button
                   onClick={sendMessage}
                   disabled={loading}
-                  className="px-6 py-3 bg-pink-400 text-white rounded-md hover:bg-pink-500 transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-6 py-3 bg-pink-400 text-white rounded-md u-transition-transform u-hover-scale-105 disabled:opacity-50 disabled:cursor-not-allowed u-hover-bg-pink-500 u-hover-text-white"
                   style={{ fontFamily: 'Fredoka, sans-serif', background: '#EC4899', borderRadius: '8px' }}
                 >
                   Send
@@ -317,8 +317,7 @@ export default function Home() {
               </div>
               <button
                 onClick={setAsDayMood}
-                className="px-34 py-3 bg-white text-black border border-gray-700 rounded-md font-semibold hover:bg-pink-500 hover:text-white transition-transform shadow-lg"
-                 
+                className="px-34 py-3 bg-white text-black border border-gray-700 rounded-md font-semibold shadow-lg u-transition-transform u-hover-scale-105 u-hover-bg-pink-500 u-hover-text-white"
               >
                 Set as Day Mood
               </button>
@@ -352,7 +351,7 @@ export default function Home() {
                     <button
                       key={rating}
                       onClick={() => updateSatisfaction(rating)}
-                      className={'text-2xl transition-transform hover:scale-110 '}
+                      className={'text-2xl u-transition-transform u-hover-scale-110 '}
                     >
                       <img src={'/decorations/star.png'} alt={`star ${rating}`} className="w-10 h-10 object-contain mr-8" />
                     </button>
@@ -387,7 +386,7 @@ export default function Home() {
             <div className="flex gap-2">
               <button
                 onClick={() => setJournalFilter('week')}
-                className={`px-3 py-1 rounded-sm border border-gray-600 text-sm ${
+                className={`px-3 py-1 rounded-sm border border-gray-600 text-sm cursor-pointer ${
                   journalFilter === 'week' 
                     ? 'bg-pink-500 text-white border border-gray-600' 
                     : 'bg-white text-gray-600'
@@ -398,7 +397,7 @@ export default function Home() {
               </button>
               <button
                 onClick={() => setJournalFilter('month')}
-                className={`px-3 py-1 rounded-sm border border-gray-600 text-sm ${
+                className={`px-3 py-1 rounded-sm border border-gray-600 text-sm cursor-pointer ${
                   journalFilter === 'month' 
                     ? 'bg-pink-500 text-white border border-gray-600' 
                     : 'bg-white text-gray-600'
@@ -409,7 +408,7 @@ export default function Home() {
               </button>
               <button
                 onClick={() => setJournalFilter('all')}
-                className={`px-3 py-1 rounded-sm border border-gray-600 text-sm ${
+                className={`px-3 py-1 rounded-sm border border-gray-600 text-sm cursor-pointer ${
                   journalFilter === 'all' 
                     ? 'bg-pink-500 text-white border border-gray-600' 
                     : 'bg-white text-gray-600'
@@ -461,7 +460,7 @@ export default function Home() {
                     <div className="flex flex-col gap-2">
                       <button
                         onClick={() => deleteMoodEntry(mood.date)}
-                        className="text-gray-600 hover:text-red-400 cursor-pointer p-1"
+                        className="text-gray-600 u-hover-text-red-400 cursor-pointer p-1"
                         title="Delete"
                       >
                         <i className="fas fa-trash"></i>
@@ -493,12 +492,12 @@ export default function Home() {
               ))}
               {/* Pagination controls */}
               <div className="flex items-center justify-center gap-3 mt-4">
-                <button
-                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                  disabled={currentPage === 1}
-                  className={`w-8 h-8 flex items-center justify-center text-lg ${currentPage === 1 ? 'text-gray-300' : 'text-gray-700 hover:text-gray-900'}`}
-                  aria-label="Previous page"
-                >
+                  <button
+                    onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                    disabled={currentPage === 1}
+                    className={`w-8 h-8 flex items-center justify-center text-lg ${currentPage === 1 ? 'text-gray-300' : 'text-gray-700 u-hover-text-gray-900 cursor-pointer'}`}
+                    aria-label="Previous page"
+                  >
                   ‹
                 </button>
                 {Array.from({ length: getTotalPages() }, (_, i) => i + 1).map((page) => (
@@ -506,19 +505,19 @@ export default function Home() {
                     key={page}
                     onClick={() => setCurrentPage(page)}
                     className={`w-8 h-8 rounded-full border border-gray-400 flex items-center justify-center text-sm transition-colors ${
-                      currentPage === page ? 'bg-gray-200 text-gray-900' : 'bg-white text-gray-700 hover:bg-gray-100'
+                      currentPage === page ? 'bg-gray-200 text-gray-900' : 'bg-white text-gray-700 u-hover-bg-gray-100'
                     }`}
                     aria-current={currentPage === page ? 'page' : undefined}
                   >
                     {page}
                   </button>
                 ))}
-                <button
-                  onClick={() => setCurrentPage(p => Math.min(getTotalPages(), p + 1))}
-                  disabled={currentPage === getTotalPages()}
-                  className={`w-8 h-8 flex items-center justify-center text-lg ${currentPage === getTotalPages() ? 'text-gray-300' : 'text-gray-700 hover:text-gray-900'}`}
-                  aria-label="Next page"
-                >
+                  <button
+                    onClick={() => setCurrentPage(p => Math.min(getTotalPages(), p + 1))}
+                    disabled={currentPage === getTotalPages()}
+                    className={`w-8 h-8 flex items-center justify-center text-lg ${currentPage === getTotalPages() ? 'text-gray-300' : 'text-gray-700 u-hover-text-gray-900 cursor-pointer'}`}
+                    aria-label="Next page"
+                  >
                   ›
                 </button>
               </div>

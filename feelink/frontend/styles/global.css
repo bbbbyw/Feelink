@@ -2,6 +2,7 @@
 
 /* Apply Fredoka font globally */
 html, body {
+  overflow-x: hidden;
   font-family: 'Fredoka';
 }
 
@@ -21,6 +22,19 @@ html, body {
       line-height: 1;
     }
   }
+
+  /* Hover helpers to avoid conflicts with precompiled CSS */
+  .u-hover-scale-105:hover { transform: scale(1.05); }
+  .u-hover-scale-110:hover { transform: scale(1.10); }
+
+  .u-hover-bg-pink-500:hover { background-color: #ec4899; }
+  .u-hover-text-white:hover { color: #ffffff; }
+  .u-hover-text-red-400:hover { color: #f87171; }
+  .u-hover-text-gray-900:hover { color: #111827; }
+  .u-hover-bg-gray-100:hover { background-color: #f3f4f6; }
+  
+  /* Ensure transforms animate when used */
+  .u-transition-transform { transition: transform 150ms ease; }
 }
 
 /* Chatbox speech bubble tail */

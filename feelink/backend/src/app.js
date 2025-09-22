@@ -97,8 +97,7 @@ async function getActivityFromDynamo(emotion){
     TableName: ACTIVITIES_TABLE,
     FilterExpression: '#e = :emo',
     ExpressionAttributeNames: { '#e': 'emotion' },
-    ExpressionAttributeValues: { ':emo': emotion },
-    Limit: 50
+    ExpressionAttributeValues: { ':emo': emotion }
   };
   try {
     const res = await db.scan(params).promise();

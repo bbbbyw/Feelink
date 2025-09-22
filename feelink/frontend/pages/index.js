@@ -353,7 +353,7 @@ export default function Home() {
                       onClick={() => updateSatisfaction(rating)}
                       className={'text-2xl u-transition-transform u-hover-scale-110 '}
                     >
-                      <img src={'/decorations/star.png'} alt={`star ${rating}`} className="w-10 h-10 object-contain mr-8" />
+                      <img src={'/decorations/star.png'} alt={`star ${rating}`} className="w-10 h-10 object-contain mr-8 cursor-pointer" />
                     </button>
                   ))}
                 </div>

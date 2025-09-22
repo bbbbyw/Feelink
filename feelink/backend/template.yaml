@@ -39,9 +39,19 @@ Resources:
       Environment:
         Variables:
           SESSIONS_TABLE: !Ref FeelinkTable
+          ACTIVITIES_TABLE: ActivitiesEncourageFeelink
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref FeelinkTable
+        - Statement:
+            - Sid: ActivitiesRead
+              Effect: Allow
+              Action:
+                - dynamodb:DescribeTable
+                - dynamodb:Scan
+                - dynamodb:Query
+                - dynamodb:GetItem
+              Resource: !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/ActivitiesEncourageFeelink
       Events:
         ChatApi:
           Type: HttpApi

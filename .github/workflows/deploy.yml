@@ -66,8 +66,10 @@ jobs:
         working-directory: feelink/backend
         run: |
           sam deploy \
-            --stack-name feelink-stack-ci \
+            --stack-name feelink-stack \
             --no-confirm-changeset \
             --no-fail-on-empty-changeset \
             --capabilities CAPABILITY_IAM \
+            --resolve-s3 \
             --region ${{ env.AWS_REGION }}
+      

@@ -89,23 +89,35 @@ function pickEmotionFromEnsemble(sentScore, votes){
 }
 
 async function getActivityFromDynamo(emotion){
-  if (!ACTIVITIES_TABLE) return FALLBACK_BANK[emotion] || FALLBACK_BANK['neutral'];
+  if (!ACTIVITIES_TABLE) {
+    const fb = FALLBACK_BANK[emotion] || FALLBACK_BANK['neutral'];
+    return { activity: fb.activity, encouragement: fb.encouragement, _source: 'fallback', _matchedCount: 0 };
+  }
   const params = {
     TableName: ACTIVITIES_TABLE,
     FilterExpression: '#e = :emo',
     ExpressionAttributeNames: { '#e': 'emotion' },
     ExpressionAttributeValues: { ':emo': emotion },
-    Limit: 10
+    Limit: 50
   };
   try {
     const res = await db.scan(params).promise();
     const items = res.Items || [];
-    if (items.length === 0) return FALLBACK_BANK[emotion] || FALLBACK_BANK['neutral'];
+    if (items.length === 0) {
+      const fb = FALLBACK_BANK[emotion] || FALLBACK_BANK['neutral'];
+      return { activity: fb.activity, encouragement: fb.encouragement, _source: 'fallback', _matchedCount: 0 };
+    }
     const pick = items[Math.floor(Math.random()*items.length)];
-    return { activity: pick.activity || FALLBACK_BANK[emotion].activity, encouragement: pick.encouragement || FALLBACK_BANK[emotion].encouragement };
+    return {
+      activity: pick.activity || FALLBACK_BANK[emotion].activity,
+      encouragement: pick.encouragement || FALLBACK_BANK[emotion].encouragement,
+      _source: 'dynamodb',
+      _matchedCount: items.length
+    };
   } catch (err) {
     console.warn('Activity lookup error', err);
-    return FALLBACK_BANK[emotion] || FALLBACK_BANK['neutral'];
+    const fb = FALLBACK_BANK[emotion] || FALLBACK_BANK['neutral'];
+    return { activity: fb.activity, encouragement: fb.encouragement, _source: 'fallback-error', _matchedCount: 0 };
   }
 }
 
@@ -154,7 +166,10 @@ exports.handler = async (event) => {
         sentimentScore: sentScore,
         keywordVotes: votes,
         detectedLanguage: lang,
-        source: ENABLE_OPENAI ? 'openai-fallback' : 'local-ensemble'
+        source: ENABLE_OPENAI ? 'openai-fallback' : 'local-ensemble',
+        activitiesSource: chosenActivity._source,
+        activitiesMatchedCount: chosenActivity._matchedCount,
+        activitiesTable: ACTIVITIES_TABLE || 'fallback'
       }
     };
     return makeResponse(200, response);

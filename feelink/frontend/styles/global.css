@@ -135,3 +135,49 @@ html, body {
   z-index: 70;             /* sits above bg, below content */
   pointer-events: none;   /* does not block clicks */
 }
+
+/* -------------------- Responsive tweaks -------------------- */
+@media (max-width: 640px) {
+  .hero-title {
+    font-size: 2.25rem; /* 4xl */
+    line-height: 1.1;
+  }
+
+  .cloud-frame {
+    padding-top: 120px;
+    padding-bottom: 120px;
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .cloud-frame::before {
+    background-size:
+      80px 80px,
+      calc(100% - 120px) 60px,
+      80px 80px,
+      40px calc(100% - 120px),
+      calc(100% - 120px) calc(100% - 120px),
+      40px calc(100% - 120px),
+      80px 80px,
+      calc(100% - 120px) 60px,
+      80px 80px;
+  }
+
+  .cloud-card {
+    min-height: 360px;
+    max-width: 100%;
+    padding: 32px 16px;
+  }
+
+  .chatbox-speech-bubble::before {
+    left: -12px;
+    border-top-width: 10px;
+    border-bottom-width: 10px;
+    border-right-width: 12px;
+  }
+
+  /* hide all decorations on phones */
+  .decoration {
+    display: none !important;
+  }
+}

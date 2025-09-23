@@ -100,13 +100,6 @@ Resources:
             Path: /chat
             Method: post
 
-Outputs:
-  HttpApiUrl:
-    Description: "HTTP API URL"
-    Value: !Sub "https://${HttpApi}.execute-api.${AWS::Region}.amazonaws.com" 
-
-  
-Resources:
   HFMonthlyCountAlarm:
     Type: AWS::CloudWatch::Alarm
     Properties:
@@ -120,3 +113,9 @@ Resources:
       ComparisonOperator: GreaterThanOrEqualToThreshold
       TreatMissingData: notBreaching
       AlarmName: !Sub "Feelink-HFMonthlyCount-ApproachingLimit-${AWS::StackName}"
+
+Outputs:
+  HttpApiUrl:
+    Description: "HTTP API URL"
+    Value: !Sub "https://${HttpApi}.execute-api.${AWS::Region}.amazonaws.com" 
+

@@ -76,7 +76,9 @@ jobs:
           fi
       - name: SAM build
         working-directory: feelink/backend
-        run: sam build --clean
+        run: |
+          rm -rf .aws-sam
+          sam build
       - name: SAM deploy
         working-directory: feelink/backend
         run: |

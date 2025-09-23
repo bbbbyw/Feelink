@@ -223,7 +223,7 @@ export default function Home() {
               className="decoration top-[550px] right-[20px] w-[150px]"></img>
 
           {/* Chat Section */}
-          <div className="flex flex-col md:flex-row items-center md:items-stretch gap-4 md:gap-6 mb-6">
+          <div className="chat-section flex flex-col md:flex-row items-center md:items-stretch gap-4 md:gap-6 mb-6">
             {/* Purple Chatbot Character */}
             <div className="flex-shrink-0 flex items-center justify-center">
               <img 

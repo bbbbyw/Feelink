@@ -136,6 +136,16 @@ html, body {
   pointer-events: none;   /* does not block clicks */
 }
 
+/* Ensure horizontal layout for chat section from md breakpoint */
+@media (min-width: 768px) {
+  .chat-section {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    gap: 1.5rem; /* matches md:gap-6 */
+  }
+}
+
 /* -------------------- Responsive tweaks -------------------- */
 @media (max-width: 640px) {
   .hero-title {

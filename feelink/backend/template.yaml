@@ -70,6 +70,15 @@ Resources:
         - SSMParameterReadPolicy:
             ParameterName: !Ref HfApiKeyParamName
         - Statement:
+            - Sid: AllowPutCustomMetrics
+              Effect: Allow
+              Action:
+                - cloudwatch:PutMetricData
+              Resource: "*"
+              Condition:
+                StringEquals:
+                  cloudwatch:namespace: "Feelink/HF"
+        - Statement:
             - Sid: ActivitiesRead
               Effect: Allow
               Action:
@@ -95,3 +104,19 @@ Outputs:
   HttpApiUrl:
     Description: "HTTP API URL"
     Value: !Sub "https://${HttpApi}.execute-api.${AWS::Region}.amazonaws.com" 
+
+  
+Resources:
+  HFMonthlyCountAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmDescription: "HF usage approaching monthly limit"
+      Namespace: "Feelink/HF"
+      MetricName: "HFMonthlyCount"
+      Statistic: Maximum
+      Period: 60
+      EvaluationPeriods: 1
+      Threshold: 450
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      TreatMissingData: notBreaching
+      AlarmName: !Sub "Feelink-HFMonthlyCount-ApproachingLimit-${AWS::StackName}"

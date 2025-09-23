@@ -5,6 +5,7 @@ const axios = require('axios');
 
 const sentiment = new Sentiment();
 const db = new AWS.DynamoDB.DocumentClient();
+const cloudwatch = new AWS.CloudWatch();
 const ssm = new AWS.SSM();
 
 const SESSIONS_TABLE = process.env.SESSIONS_TABLE || 'FeelinkSessions';
@@ -87,6 +88,19 @@ async function checkAndIncrementMonthlyQuota(){
   try {
     const res = await db.update(params).promise();
     const current = res.Attributes?.count || 0;
+    // Publish gauge to CloudWatch so we can alarm on approaching limit
+    try {
+      await cloudwatch.putMetricData({
+        Namespace: 'Feelink/HF',
+        MetricData: [{
+          MetricName: 'HFMonthlyCount',
+          Value: Number(current),
+          Unit: 'Count'
+        }]
+      }).promise();
+    } catch (e) {
+      console.warn('PutMetricData error', e.message);
+    }
     if (current > HF_MONTHLY_LIMIT) return { allowed: false, current };
     return { allowed: true, current };
   } catch (err) {

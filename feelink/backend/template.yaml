@@ -100,6 +100,18 @@ Resources:
             Path: /chat
             Method: post
 
+  HFAlertTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: Feelink-HFAlerts
+
+  HFAlertSubscriptionEmail:
+    Type: AWS::SNS::Subscription
+    Properties:
+      TopicArn: !Ref HFAlertTopic
+      Protocol: email
+      Endpoint: yok.byw@gmail.com
+
   HFMonthlyCountAlarm:
     Type: AWS::CloudWatch::Alarm
     Properties:
@@ -113,6 +125,8 @@ Resources:
       ComparisonOperator: GreaterThanOrEqualToThreshold
       TreatMissingData: notBreaching
       AlarmName: !Sub "Feelink-HFMonthlyCount-ApproachingLimit-${AWS::StackName}"
+      AlarmActions:
+        - !Ref HFAlertTopic
 
 Outputs:
   HttpApiUrl:

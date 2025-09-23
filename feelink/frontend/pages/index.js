@@ -229,7 +229,7 @@ export default function Home() {
               <img 
                 src="/decorations/ChatBot-purple.png" 
                 alt="Purple ChatBot character" 
-                className="w-40 h-40 md:w-55 md:h-55 object-contain u-transition-transform u-hover-scale-105"
+                className="w-50 h-50 md:w-55 md:h-55 object-contain u-transition-transform u-hover-scale-105"
               />
             </div>
 

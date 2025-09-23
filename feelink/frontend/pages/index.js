@@ -214,32 +214,32 @@ export default function Home() {
         <div className="mt-3 max-w-5xl mx-auto px-4 py-6">
            {/*decorations*/}  
           <img src="decorations/rainbow.png" alt="rainbow"
-              class="decoration top-[-20px] left-[-30px] w-[240px]"></img>
+              className="decoration top-[-20px] left-[-30px] w-[240px]"></img>
           <img src="decorations/bow.png" alt="bow"
-              class="decoration top-[30px] right-[120px] w-[120px]"></img>
+              className="decoration top-[30px] right-[120px] w-[120px]"></img>
           <img src="decorations/rainbow_pastel.png" alt="rainbow-pastel"
-              class="decoration top-[-40px] right-[-30px] w-[240px] rotate-45 !z-69"></img>
+              className="decoration top-[-40px] right-[-30px] w-[240px] rotate-45 !z-69"></img>
           <img src="decorations/star.png" alt="star"
-              class="decoration top-[550px] right-[20px] w-[150px]"></img>
+              className="decoration top-[550px] right-[20px] w-[150px]"></img>
 
           {/* Chat Section */}
-          <div className="flex items-center gap-6 mb-6">
+          <div className="flex flex-col lg:flex-row items-center lg:items-stretch gap-4 lg:gap-6 mb-6">
             {/* Purple Chatbot Character */}
-            <div className="flex-shrink-0">
+            <div className="flex-shrink-0 flex items-center justify-center">
               <img 
                 src="/decorations/ChatBot-purple.png" 
                 alt="Purple ChatBot character" 
-                className="w-55 h-55 object-contain u-transition-transform u-hover-scale-105"
+                className="w-40 h-40 lg:w-55 lg:h-55 object-contain u-transition-transform u-hover-scale-105"
               />
             </div>
 
             {/* Chat Box */}
-            <div className="bg-white rounded-2xl p-6 flex-1 chatbox-speech-bubble">
-              <h2 className="text-xl font-semibold text-gray-800 mb-4 text-center"  >
+            <div className="bg-white rounded-2xl p-4 lg:p-6 w-full lg:flex-1 chatbox-speech-bubble">
+              <h2 className="text-lg lg:text-xl font-semibold text-gray-800 mb-4 text-center"  >
                 CHAT WITH FEELINK
               </h2>         
               {/* Messages */}
-              <div className="h-60 overflow-y-auto border border-gray-200 rounded-lg p-4 mb-4 bg-gray-50">
+              <div className="h-60 overflow-y-auto border border-gray-200 rounded-lg p-3 lg:p-4 mb-4 bg-gray-50">
                 {messages.map((msg, i) => (
                   <div key={i} className={`mb-3 ${msg.role === 'user' ? 'text-right' : 'text-left'}`}>
                     <div className={`inline-block max-w-xs px-4 py-2 rounded-2xl ${
@@ -270,13 +270,13 @@ export default function Home() {
                   onChange={(e) => setText(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
                   placeholder="How are you feeling today?"
-                  className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-400 focus:border-transparent"
+                  className="flex-1 px-3 lg:px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-400 focus:border-transparent"
                   
                 />
                 <button
                   onClick={sendMessage}
                   disabled={loading}
-                  className="px-6 py-3 bg-pink-400 text-white rounded-md u-transition-transform u-hover-scale-105 disabled:opacity-50 disabled:cursor-not-allowed u-hover-bg-pink-500 u-hover-text-white"
+                  className="px-4 lg:px-6 py-3 bg-pink-400 text-white rounded-md u-transition-transform u-hover-scale-105 disabled:opacity-50 disabled:cursor-not-allowed u-hover-bg-pink-500 u-hover-text-white"
                   style={{ fontFamily: 'Fredoka, sans-serif', background: '#EC4899', borderRadius: '8px' }}
                 >
                   Send
@@ -290,23 +290,23 @@ export default function Home() {
           <div className="relative mb-8 cloud-card">
             {/*decorations*/}  
             <img src="decorations/wink.png" alt="wink"
-                class="decoration top-[100px] left-[-220px] w-[200px]"></img>
+                className="decoration top-[100px] left-[-220px] w-[200px]"></img>
             <img src="decorations/sun.png" alt="sun"
-                class="decoration top-[300px] right-[-250px] w-[250px]"></img>
+                className="decoration top-[300px] right-[-250px] w-[250px]"></img>
           
-            <h3 className="text-4xl font-bold text-pink-500 text-center mb-1"  >Set as Day Mood</h3>
+            <h3 className="text-2xl md:text-4xl font-bold text-pink-500 text-center mb-1"  >Set as Day Mood</h3>
             <div className="flex flex-row justify-center items-center mb-4">
               <img 
                 src={getEmotionImage(lastResult.emotion)} 
                 alt={lastResult.emotion}
-                className="w-40 h-40 object-contain"
+                className="w-28 h-28 md:w-40 md:h-40 object-contain"
               />
             </div>
             <div className="flex flex-col items-center justify-center">
-                <div className="font-medium text-gray-800 capitalize text-center text-4xl mb-2"  >
+                <div className="font-medium text-gray-800 capitalize text-center text-2xl md:text-4xl mb-2"  >
                   YOUR EMOTION: <strong>{lastResult.emotion}</strong>
                 </div>
-                <div className="text-lg text-gray-600 mb-2"  >
+                <div className="text-sm md:text-lg text-gray-600 mb-2"  >
                     Confidence: {Math.round(lastResult.confidence * 100)}%
                 </div>
             </div>
@@ -317,7 +317,7 @@ export default function Home() {
               </div>
               <button
                 onClick={setAsDayMood}
-                className="px-34 py-3 bg-white text-black border border-gray-700 rounded-md font-semibold shadow-lg u-transition-transform u-hover-scale-105 u-hover-bg-pink-500 u-hover-text-white"
+                className="px-6 md:px-34 py-3 bg-white text-black border border-gray-700 rounded-md font-semibold shadow-lg u-transition-transform u-hover-scale-105 u-hover-bg-pink-500 u-hover-text-white"
               >
                 Set as Day Mood
               </button>
@@ -330,7 +330,7 @@ export default function Home() {
         {todayMood && (
           <div className="bg-white rounded-md p-6 mb-6 border border-gray-400">
 
-            <h3 className="text-4xl font-bold text-pink-500 mb-4" >Today's Task</h3>
+            <h3 className="text-2xl md:text-4xl font-bold text-pink-500 mb-4" >Today's Task</h3>
             <div className="flex items-center gap-3 mb-4">
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
@@ -367,22 +367,22 @@ export default function Home() {
           </div>
         )}
 
-
+        
         
         {/* Journal Section */}
         <div className="bg-white rounded-md border border-gray-400 p-6">
           {/*decorations*/}  
           <img src="decorations/wink.png" alt="wink"
-              class="decoration bottom-[1px] left-[-20px] w-[250px]"></img>
+              className="decoration bottom-[1px] left-[-20px] w-[250px]"></img>
           <img src="decorations/sun.png" alt="sun"
-              class="decoration bottom-[30px] left-[350px] w-[100px] "></img>
+              className="decoration bottom-[30px] left-[350px] w-[100px] "></img>
           <img src="decorations/star.png" alt="star"
-              class="decoration bottom-[20px] right-[0px] w-[220px]"></img>
+              className="decoration bottom-[20px] right-[0px] w-[220px]"></img>
           <img src="decorations/picture.png" alt="picture"
-              class="decoration bottom-[30px] right-[220px] w-[80px] rotate-15"></img>
+              className="decoration bottom-[30px] right-[220px] w-[80px] rotate-15"></img>
           
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-4xl font-bold text-pink-500"  >Mood Journal</h2>
+            <h2 className="text-2xl md:text-4xl font-bold text-pink-500"  >Mood Journal</h2>
             <div className="flex gap-2">
               <button
                 onClick={() => setJournalFilter('week')}
@@ -431,7 +431,7 @@ export default function Home() {
           ) : (
             <div className="grid gap-4">
               {getPaginatedMoods().map((mood, index) => (
-                <div key={index} className={`bg-gradient-to-r ${getMoodColor(mood.emotion)} rounded-lg p-6 border shadow-sm`}>
+                <div key={index} className={`bg-gradient-to-r ${getMoodColor(mood.emotion)} rounded-lg p-4 md:p-6 border shadow-sm`}>
                   <div className="flex items-center gap-4">
                     {/* Left side - Emotion image and date */}
                     <div className="flex flex-col items-center mr-4">

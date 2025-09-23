@@ -223,23 +223,23 @@ export default function Home() {
               className="decoration top-[550px] right-[20px] w-[150px]"></img>
 
           {/* Chat Section */}
-          <div className="flex flex-col lg:flex-row items-center lg:items-stretch gap-4 lg:gap-6 mb-6">
+          <div className="flex flex-col md:flex-row items-center md:items-stretch gap-4 md:gap-6 mb-6">
             {/* Purple Chatbot Character */}
             <div className="flex-shrink-0 flex items-center justify-center">
               <img 
                 src="/decorations/ChatBot-purple.png" 
                 alt="Purple ChatBot character" 
-                className="w-40 h-40 lg:w-55 lg:h-55 object-contain u-transition-transform u-hover-scale-105"
+                className="w-40 h-40 md:w-55 md:h-55 object-contain u-transition-transform u-hover-scale-105"
               />
             </div>
 
             {/* Chat Box */}
-            <div className="bg-white rounded-2xl p-4 lg:p-6 w-full lg:flex-1 chatbox-speech-bubble">
-              <h2 className="text-lg lg:text-xl font-semibold text-gray-800 mb-4 text-center"  >
+            <div className="bg-white rounded-2xl p-4 md:p-6 w-full md:flex-1 chatbox-speech-bubble">
+              <h2 className="text-lg md:text-xl font-semibold text-gray-800 mb-4 text-center"  >
                 CHAT WITH FEELINK
               </h2>         
               {/* Messages */}
-              <div className="h-60 overflow-y-auto border border-gray-200 rounded-lg p-3 lg:p-4 mb-4 bg-gray-50">
+              <div className="h-60 overflow-y-auto border border-gray-200 rounded-lg p-3 md:p-4 mb-4 bg-gray-50">
                 {messages.map((msg, i) => (
                   <div key={i} className={`mb-3 ${msg.role === 'user' ? 'text-right' : 'text-left'}`}>
                     <div className={`inline-block max-w-xs px-4 py-2 rounded-2xl ${
@@ -270,13 +270,13 @@ export default function Home() {
                   onChange={(e) => setText(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
                   placeholder="How are you feeling today?"
-                  className="flex-1 px-3 lg:px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-400 focus:border-transparent"
+                  className="flex-1 px-3 md:px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-400 focus:border-transparent"
                   
                 />
                 <button
                   onClick={sendMessage}
                   disabled={loading}
-                  className="px-4 lg:px-6 py-3 bg-pink-400 text-white rounded-md u-transition-transform u-hover-scale-105 disabled:opacity-50 disabled:cursor-not-allowed u-hover-bg-pink-500 u-hover-text-white"
+                  className="px-4 md:px-6 py-3 bg-pink-400 text-white rounded-md u-transition-transform u-hover-scale-105 disabled:opacity-50 disabled:cursor-not-allowed u-hover-bg-pink-500 u-hover-text-white"
                   style={{ fontFamily: 'Fredoka, sans-serif', background: '#EC4899', borderRadius: '8px' }}
                 >
                   Send

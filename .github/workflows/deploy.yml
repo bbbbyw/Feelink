@@ -59,9 +59,24 @@ jobs:
         with:
           role-to-assume: ${{ vars.AWS_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
+      - name: Put HF key into SSM (for backend)
+        env:
+          HF_API_KEY: ${{ secrets.HF_API_KEY }}
+          AWS_REGION: ${{ env.AWS_REGION }}
+        run: |
+          if [ -n "$HF_API_KEY" ]; then
+            aws ssm put-parameter \
+              --name /feelink/hf_api_key \
+              --type SecureString \
+              --value "$HF_API_KEY" \
+              --overwrite \
+              --region "$AWS_REGION";
+          else
+            echo "HF_API_KEY not set; skipping SSM put-parameter";
+          fi
       - name: SAM build
         working-directory: feelink/backend
-        run: sam build
+        run: sam build --clean
       - name: SAM deploy
         working-directory: feelink/backend
         run: |

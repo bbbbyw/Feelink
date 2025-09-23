@@ -58,7 +58,8 @@ Resources:
           SESSIONS_TABLE: !Ref FeelinkTable
           ACTIVITIES_TABLE: ActivitiesEncourageFeelink
           ENABLE_HF: true
-          HUGGING_FACE_API_KEY: !Sub "{{resolve:ssm-secure:${HfApiKeyParamName}:1}}"
+          HUGGING_FACE_API_KEY: ""
+          HF_SSM_PARAM: !Ref HfApiKeyParamName
           HF_MONTHLY_LIMIT: 500
           USAGE_TABLE: !Ref FeelinkUsage
       Policies:

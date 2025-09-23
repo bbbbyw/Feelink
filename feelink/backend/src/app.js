@@ -5,12 +5,14 @@ const axios = require('axios');
 
 const sentiment = new Sentiment();
 const db = new AWS.DynamoDB.DocumentClient();
+const ssm = new AWS.SSM();
 
 const SESSIONS_TABLE = process.env.SESSIONS_TABLE || 'FeelinkSessions';
 const ACTIVITIES_TABLE = process.env.ACTIVITIES_TABLE || '';
 const ENABLE_OPENAI = process.env.ENABLE_OPENAI === 'true';
 const USAGE_TABLE = process.env.USAGE_TABLE || 'FeelinkUsage';
 const HUGGING_FACE_API_KEY = process.env.HUGGING_FACE_API_KEY || '';
+const HF_SSM_PARAM = process.env.HF_SSM_PARAM || '';
 const ENABLE_HF = process.env.ENABLE_HF === 'true';
 const HF_MONTHLY_LIMIT = Number(process.env.HF_MONTHLY_LIMIT || '500');
 
@@ -93,9 +95,27 @@ async function checkAndIncrementMonthlyQuota(){
   }
 }
 
+// Resolve HF key with simple in-memory cache
+let cachedHfKey = null;
+async function getHfApiKey(){
+  if (cachedHfKey) return cachedHfKey;
+  if (HUGGING_FACE_API_KEY) { cachedHfKey = HUGGING_FACE_API_KEY; return cachedHfKey; }
+  if (!HF_SSM_PARAM) return '';
+  try {
+    const res = await ssm.getParameter({ Name: HF_SSM_PARAM, WithDecryption: true }).promise();
+    cachedHfKey = res.Parameter?.Value || '';
+    return cachedHfKey;
+  } catch (e) {
+    console.warn('Failed to load HF key from SSM', e.message);
+    return '';
+  }
+}
+
 // Hugging Face emotion detection
 async function analyzeEmotionWithHF(text, retryCount = 0){
-  if (!ENABLE_HF || !HUGGING_FACE_API_KEY) return null;
+  if (!ENABLE_HF) return null;
+  const hfKey = await getHfApiKey();
+  if (!hfKey) return null;
 
   const quota = await checkAndIncrementMonthlyQuota();
   if (!quota.allowed) return null;
@@ -105,7 +125,7 @@ async function analyzeEmotionWithHF(text, retryCount = 0){
     const response = await axios.post(
       `https://api-inference.huggingface.co/models/${model}`,
       { inputs: text, options: { wait_for_model: true, use_cache: true } },
-      { headers: { Authorization: `Bearer ${HUGGING_FACE_API_KEY}`,'Content-Type': 'application/json' }, timeout: 10000 }
+      { headers: { Authorization: `Bearer ${hfKey}`,'Content-Type': 'application/json' }, timeout: 10000 }
     );
     if (response.data && Array.isArray(response.data) && response.data.length > 0){
       const emotions = response.data[0].sort((a,b)=>b.score - a.score);

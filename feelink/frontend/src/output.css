@@ -417,8 +417,8 @@
   .h-28 {
     height: calc(var(--spacing) * 28);
   }
-  .h-40 {
-    height: calc(var(--spacing) * 40);
+  .h-50 {
+    height: calc(var(--spacing) * 50);
   }
   .h-60 {
     height: calc(var(--spacing) * 60);
@@ -447,8 +447,8 @@
   .w-28 {
     width: calc(var(--spacing) * 28);
   }
-  .w-40 {
-    width: calc(var(--spacing) * 40);
+  .w-50 {
+    width: calc(var(--spacing) * 50);
   }
   .w-\[80px\] {
     width: 80px;

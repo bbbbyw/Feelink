@@ -1,0 +1,30 @@
+sequenceDiagram
+  participant B as Browser (Next.js)
+  participant CF as CloudFront
+  participant S3 as S3 Static Site
+  participant API as API Gateway (HTTP API)
+  participant L as Lambda (app.handler)
+  participant D1 as DynamoDB FeelinkTable
+  participant D2 as DynamoDB FeelinkUsage
+  participant D3 as DynamoDB ActivitiesEncourageFeelink
+  participant SSM as SSM Parameter Store
+  participant HF as Hugging Face API
+  participant CW as CloudWatch
+
+  B->>CF: GET / (HTML, JS, CSS)
+  CF->>S3: Fetch static assets (OAC)
+  B->>API: POST /chat { text, userId }
+  API->>L: Invoke (event)
+  L->>SSM: getParameter(Name=HF_SSM_PARAM, WithDecryption=true)
+  L->>D2: Update usage counter (ADD count :inc)
+  L->>HF: Analyze emotion (axios -> model)
+  L->>D3: Scan/Query activities by emotion
+  alt items found
+    D3-->>L: {activity, encouragement}
+  else fallback
+    L-->>L: Use in-memory fallback bank
+  end
+  L->>D1: PutItem session record
+  L->>CW: PutMetricData Feelink/HF:HFMonthlyCount
+  L-->>API: 200 { emotion, confidence, activity, encouragement }
+  API-->>B: Response

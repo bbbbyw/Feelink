@@ -1,0 +1,30 @@
+flowchart LR
+  U[End User Browser]
+  CF[Amazon CloudFront]
+  S3[(Amazon S3\nfeelinkfrontendbucketbyw)]
+  APIGW[Amazon API Gateway - HTTP API]
+  L[AWS Lambda\nsrc/app.handler]
+  DDB1[(DynamoDB\nFeelinkTable)]
+  DDB2[(DynamoDB\nFeelinkUsage)]
+  DDB3[(DynamoDB\nActivitiesEncourageFeelink)]
+  SSM[AWS Systems Manager\nParameter Store]
+  KMS[AWS KMS alias/aws/ssm]
+  HF[Hugging Face Inference API]
+  CW[Amazon CloudWatch Metrics & Logs]
+  ALARM[CloudWatch Alarm]
+  SNS[Amazon SNS Topic\nFeelink-HFAlerts]
+
+  U --> CF
+  CF -- OAC --> S3
+  U -. POST /chat .-> APIGW
+  APIGW --> L
+  L -- sessions PutItem --> DDB1
+  L -- usage Update --> DDB2
+  L -- scan/query --> DDB3
+  L -- getParameter(WithDecryption) --> SSM
+  SSM -- decrypt --> KMS
+  L -- axios --> HF
+  L -- PutMetricData --> CW
+  L -- logs --> CW
+  CW -- metric threshold --> ALARM
+  ALARM --> SNS

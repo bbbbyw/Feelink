@@ -16,10 +16,10 @@ Help people understand and navigate emotions in seconds. Feelink analyzes short 
 
 ## Screenshots
 
-![Home](./frontend/public/demo1.png)
-![Chat](./frontend/public/demo2.png)
-![Chat Result](./frontend/public/demo3.png)
-![Task & Mood journal](./frontend/public/demo4.png)
+![Home](./feelink/frontend/public/demo1.png)
+![Chat](./feelink/frontend/public/demo2.png)
+![Chat Result](./feelink/frontend/public/demo3.png)
+![Task & Mood journal](./feelink/frontend/public/demo4.png)
 
 
 ## Key Features
@@ -96,14 +96,14 @@ flowchart TB
   end
 
   subgraph S3Bucket[S3 Static Site]
-    S3[(S3: feelinkfrontendbucketbyw)]
+    S3["S3: feelinkfrontendbucketbyw"]
   end
 
-  B <-- static assets --> CF
-  CF -- OAC read --> S3
+  B <-->|static assets| CF
+  CF --|OAC read|--> S3
 
-  B -- POST /chat --> APIGW[API Gateway (HTTP API)]
-  APIGW --> LAMBDA[Lambda: ChatFunction]
+  B --|POST /chat|--> APIGW["API Gateway (HTTP API)"]
+  APIGW --> LAMBDA["Lambda: ChatFunction"]
 
   subgraph Data[DynamoDB]
     D1[(FeelinkTable: Sessions)]
@@ -113,13 +113,13 @@ flowchart TB
 
   LAMBDA --> D1
   LAMBDA --> D2
-  LAMBDA -. optional read .-> D3
+  LAMBDA -.->|optional read| D3
 
   subgraph Secrets[SSM Parameter Store + KMS]
-    SSM[(HF API Key SecureString)]
+    SSM["HF API Key SecureString"]
   end
 
-  LAMBDA -- getParameter(Decrypt) --> SSM
+  LAMBDA --|getParameter(Decrypt)|--> SSM
 
   subgraph Observability[CloudWatch]
     CWLogs[(Logs)]

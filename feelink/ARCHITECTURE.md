@@ -1,165 +1,118 @@
 ## Feelink Architecture
 
-This document describes the end-to-end architecture of the Feelink project, covering frontend, backend, data flow, AWS services, deployment, security, and operations.
-
-> Diagram sources live in `feelink/docs/`. Generate PNGs with Mermaid CLI and view them locally.
+This document outlines the architecture for the Feelink project: frontend delivery, backend services, data, observability, and deployment.
 
 ### High-Level Overview
 
-- Frontend: Next.js single-page app hosted on Amazon S3 and served via Amazon CloudFront with Origin Access Control (OAC).
-- Backend: AWS SAM stack providing an Amazon API Gateway HTTP API backed by an AWS Lambda function (Node.js 20) that analyzes text emotions using Hugging Face Inference API, stores sessions in Amazon DynamoDB, and tracks monthly usage metrics in CloudWatch with an SNS alert.
-- Configuration/Secrets: AWS Systems Manager Parameter Store (SecureString) for the Hugging Face API key, decrypted via AWS KMS managed key for SSM.
+- **Frontend (Next.js 14 + Tailwind)**: Built from `feelink/frontend`. Static assets are hosted in an S3 bucket and served via CloudFront with Origin Access Control (OAC).
+- **Backend (AWS SAM / Lambda + HTTP API)**: One Lambda function (`ChatFunction`) behind an API Gateway HTTP API provides `POST /chat` for emotion analysis and activity suggestions.
+- **Data (DynamoDB)**: Stores chat sessions (`FeelinkTable`) and monthly usage counters (`FeelinkUsage`). Optionally reads activities from `ActivitiesEncourageFeelink`.
+- **Secrets (SSM Parameter Store + KMS)**: Hugging Face API key stored as SecureString; Lambda reads via `ssm.getParameter` with decryption.
+- **Observability (CloudWatch)**: Custom metric `Feelink/HF.HFMonthlyCount` with an alarm and SNS email; Lambda logs.
+- **Deployment (SAM/CloudFormation)**: Infrastructure defined in `backend/template.yaml`, deployed as stack `feelink-stack`. Frontend deployed to S3; CloudFront invalidations on updates.
 
 ### Component Diagram
 
-- Mermaid source: `feelink/docs/component.mmd`
-- Generated image: `feelink/docs/component.png`
-
-![Component Diagram](docs/component.png)
-
 ```mermaid
-flowchart LR
-  U[End User Browser]
-  CF[Amazon CloudFront]
-  S3[(Amazon S3\nfeelinkfrontendbucketbyw)]
-  APIGW[Amazon API Gateway (HTTP API)]
-  L[AWS Lambda\nsrc/app.handler]
-  DDB1[(DynamoDB\nFeelinkTable)]
-  DDB2[(DynamoDB\nFeelinkUsage)]
-  DDB3[(DynamoDB\nActivitiesEncourageFeelink)]
-  SSM[AWS Systems Manager\nParameter Store]
-  KMS[AWS KMS alias/aws/ssm]
-  HF[Hugging Face Inference API]
-  CW[Amazon CloudWatch Metrics & Logs]
-  ALARM[CloudWatch Alarm]
-  SNS[Amazon SNS Topic\nFeelink-HFAlerts]
+flowchart TB
+  subgraph Client
+    B[Browser]
+  end
 
-  U --> CF
-  CF -- OAC --> S3
-  U -. POST /chat .-> APIGW
-  APIGW --> L
-  L -- sessions PutItem --> DDB1
-  L -- usage Update --> DDB2
-  L -- scan/query --> DDB3
-  L -- getParameter(WithDecryption) --> SSM
-  SSM -- decrypt --> KMS
-  L -- axios --> HF
-  L -- PutMetricData --> CW
-  L -- logs --> CW
-  CW -- metric threshold --> ALARM
-  ALARM --> SNS
+  subgraph CDN[CloudFront Distribution]
+    CF[CloudFront]
+  end
+
+  subgraph S3Bucket[S3 Static Site]
+    S3[(S3: feelinkfrontendbucketbyw)]
+  end
+
+  B <-- static assets --> CF
+  CF -- OAC read --> S3
+
+  B -- POST /chat --> APIGW[API Gateway (HTTP API)]
+  APIGW --> LAMBDA[Lambda: ChatFunction]
+
+  subgraph Data[DynamoDB]
+    D1[(FeelinkTable: Sessions)]
+    D2[(FeelinkUsage: Monthly Counters)]
+    D3[(ActivitiesEncourageFeelink)]
+  end
+
+  LAMBDA --> D1
+  LAMBDA --> D2
+  LAMBDA -. optional read .-> D3
+
+  subgraph Secrets[SSM Parameter Store + KMS]
+    SSM[(HF API Key SecureString)]
+  end
+
+  LAMBDA -- getParameter(Decrypt) --> SSM
+
+  subgraph Observability[CloudWatch]
+    CWLogs[(Logs)]
+    CWMetrics[(Metric: Feelink/HF.HFMonthlyCount)]
+    CWAlarm[Alarm: HFMonthlyCountAlarm]
+  end
+
+  LAMBDA --> CWMetrics
+  LAMBDA --> CWLogs
+
+  subgraph Alerts[SNS]
+    SNSTopic[(HFAlertTopic)]
+    Email[(Email Subscription)]
+  end
+
+  CWAlarm --> SNSTopic --> Email
 ```
 
-### Request Sequence
-
-- Mermaid source: `feelink/docs/sequence.mmd`
-- Generated image: `feelink/docs/sequence.png`
-
-![Request Sequence](docs/sequence.png)
+### Request Flow (Sequence)
 
 ```mermaid
 sequenceDiagram
-  participant B as Browser (Next.js)
+  autonumber
+  participant U as User Browser
   participant CF as CloudFront
-  participant S3 as S3 Static Site
+  participant S3 as S3 (Static Assets)
   participant API as API Gateway (HTTP API)
-  participant L as Lambda (app.handler)
-  participant D1 as DynamoDB FeelinkTable
-  participant D2 as DynamoDB FeelinkUsage
-  participant D3 as DynamoDB ActivitiesEncourageFeelink
+  participant L as Lambda (ChatFunction)
+  participant D1 as DynamoDB (FeelinkTable)
+  participant D2 as DynamoDB (FeelinkUsage)
   participant SSM as SSM Parameter Store
-  participant HF as Hugging Face API
-  participant CW as CloudWatch
+  participant CW as CloudWatch (Metrics/Logs)
+  participant SNS as SNS Topic
 
-  B->>CF: GET / (HTML, JS, CSS)
-  CF->>S3: Fetch static assets (OAC)
-  B->>API: POST /chat { text, userId }
-  API->>L: Invoke (event)
-  L->>SSM: getParameter(Name=HF_SSM_PARAM, WithDecryption=true)
-  L->>D2: Update usage counter (ADD count :inc)
-  L->>HF: Analyze emotion (axios -> model)
-  L->>D3: Scan/Query activities by emotion
-  alt items found
-    D3-->>L: {activity, encouragement}
-  else fallback
-    L-->>L: Use in-memory fallback bank
+  U->>CF: GET index.html, JS, CSS
+  CF->>S3: OAC GetObject
+  S3-->>CF: Assets
+  CF-->>U: Delivered assets
+
+  U->>API: POST /chat { text }
+  API->>L: Invoke with event
+  par Resolve secret
+    L->>SSM: getParameter(HF key, WithDecryption)
+    SSM-->>L: SecureString value
   end
+  L->>L: Analyze emotion (HF + sentiment + keywords)
+  L->>D2: Update monthly counter (ADD count)
+  L->>CW: PutMetricData HFMonthlyCount
   L->>D1: PutItem session record
-  L->>CW: PutMetricData Feelink/HF:HFMonthlyCount
-  L-->>API: 200 { emotion, confidence, activity, encouragement }
-  API-->>B: Response
+  L-->>API: 200 { emotion, activity, encouragement }
+  API-->>U: JSON response
+
+  note over CW,SNS: Alarm on metric triggers SNS email when threshold reached
 ```
 
-### Generate PNG Diagrams
+### AWS Services Used
 
-- Using npx (no global install):
-  - `npx @mermaid-js/mermaid-cli -i feelink/docs/component.mmd -o feelink/docs/component.png`
-  - `npx @mermaid-js/mermaid-cli -i feelink/docs/sequence.mmd -o feelink/docs/sequence.png`
+- API Gateway (HTTP API)
+- AWS Lambda
+- Amazon DynamoDB
+- AWS Systems Manager Parameter Store (+ KMS decrypt)
+- Amazon CloudWatch (Logs, Metrics, Alarms)
+- Amazon Simple Notification Service (SNS)
+- Amazon S3 (static hosting + SAM packaging)
+- Amazon CloudFront (with OAC)
+- AWS CloudFormation (via AWS SAM)
+- AWS IAM
 
-### Data Model
-
-- DynamoDB `FeelinkTable`
-  - Partition key: `sessionId` (S)
-  - Attributes: `userHash`, `timestamp`, `text`, `emotion`, `confidence`, `method`, `lang`, `details`
-
-- DynamoDB `FeelinkUsage`
-  - Partition key: `pk` (S), format `hf-usage-YYYY-MM`
-  - Attributes: `count` (usage counter incremented per request to Hugging Face)
-
-- DynamoDB `ActivitiesEncourageFeelink` (pre-existing content table)
-  - Access pattern: filter or query by `emotion`
-  - Stored content: `activity`, `encouragement` (schema inferred by usage)
-
-### AWS Services and Roles
-
-- API Gateway (HTTP API): public endpoint for `POST /chat` with CORS.
-- Lambda (Node.js 20): core business logic in `feelink/backend/src/app.js`.
-- DynamoDB: session storage (`FeelinkTable`), usage counter (`FeelinkUsage`), and read access to curated activities (`ActivitiesEncourageFeelink`).
-- Systems Manager Parameter Store: Hugging Face API key resolution (`/feelink/hf_api_key`).
-- KMS: decrypt permissions for `alias/aws/ssm` enabling SecureString retrieval.
-- CloudWatch: custom metric `Feelink/HF.HFMonthlyCount`, logs, and alarm on threshold.
-- SNS: topic `Feelink-HFAlerts` with email subscription for near-quota notifications.
-- S3 + CloudFront: static hosting for Next.js build with OAC (`feelink-oac`).
-- CloudFormation/SAM: stacks, transforms, and deployment orchestration (`feelink-stack`).
-
-### Security
-
-- Frontend access: CloudFront OAC restricts S3 bucket to CloudFront only.
-- Backend IAM for Lambda:
-  - CRUD to `FeelinkTable` and `FeelinkUsage` only.
-  - Read (`DescribeTable/Scan/Query/GetItem`) from `ActivitiesEncourageFeelink` only.
-  - Read SecureString from SSM parameter `HF_SSM_PARAM` with `kms:Decrypt` limited to `alias/aws/ssm`.
-  - `cloudwatch:PutMetricData` restricted to namespace `Feelink/HF`.
-- CORS: `*` origins for API with restricted methods/headers; adjust for production if needed.
-- Secrets: HF key comes from SSM or env var; prefer SSM in production.
-
-### Operations and Monitoring
-
-- Usage Counter: `FeelinkUsage` maintains monthly count keyed by `hf-usage-YYYY-MM`.
-- Custom Metric: Lambda publishes `HFMonthlyCount` to `Feelink/HF` namespace.
-- Alarming: CloudWatch Alarm triggers SNS email when approaching monthly limit.
-- Logging: Lambda emits logs to CloudWatch Logs.
-
-### Deployment
-
-- Backend (SAM):
-  - Template: `feelink/backend/template.yaml` (region: `ap-southeast-2`).
-  - Stack: `feelink-stack`; `samconfig.toml` enables `resolve_s3=true` for artifact bucket.
-  - Command (example): `sam build && sam deploy --guided`.
-
-- Frontend:
-  - Build: `npm run build` in `feelink/frontend` to generate Next.js production output.
-  - Hosting: Upload `out/` or Next.js static assets to S3 bucket `feelinkfrontendbucketbyw`.
-  - Invalidation: Create CloudFront invalidation after upload.
-
-### External Dependencies
-
-- Hugging Face Inference API: model `j-hartmann/emotion-english-distilroberta-base` (multilingual) and `cardiffnlp/twitter-roberta-base-emotion` (English).
-
-### Future Improvements
-
-- Replace `Scan` on `ActivitiesEncourageFeelink` with a queryable GSI keyed by emotion.
-- Tighten API CORS to known domains.
-- Add CI/CD (e.g., GitHub Actions) to build/deploy frontend and SAM backend with approvals.
-- Add WAF on CloudFront/API Gateway for additional protection.
-- Add per-IP and per-user rate limiting at API Gateway.

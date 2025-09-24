@@ -10,7 +10,6 @@ const ssm = new AWS.SSM();
 
 const SESSIONS_TABLE = process.env.SESSIONS_TABLE || 'FeelinkSessions';
 const ACTIVITIES_TABLE = process.env.ACTIVITIES_TABLE || '';
-const ENABLE_OPENAI = process.env.ENABLE_OPENAI === 'true';
 const USAGE_TABLE = process.env.USAGE_TABLE || 'FeelinkUsage';
 const HUGGING_FACE_API_KEY = process.env.HUGGING_FACE_API_KEY || '';
 const HF_SSM_PARAM = process.env.HF_SSM_PARAM || '';

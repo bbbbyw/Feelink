@@ -209,7 +209,3 @@ End-to-end automation for build, test, and deploy.(GitHub Actions builds fronten
 - Estimated monthly cost (low traffic): <$2–5/month (CloudFront+S3+DDB+HuggingFace on-demand+Lambda free tier)
 - Cost controls: custom metric + CloudWatch alarm + SNS email alert
 
-## Deploy
-
-- Backend: `sam deploy` (see `backend/template.yaml` and `backend/samconfig.toml`)
-- Frontend: build and upload static assets to S3, then invalidate CloudFront

@@ -6,7 +6,7 @@ A full-stack project with a Next.js frontend and a serverless AWS backend for em
 
 Help people understand and navigate emotions in seconds. Feelink analyzes short text to detect emotion via text analysis model to provide utmost accurate emotion and offers variety of activities and encouraging message to uplifting user's emotion.
 
-- For: students, employees, or anyone seeking quick emotional insight
+- For students, employees, or anyone seeking quick emotional insight
 - Text analysis model combines Hugging Face analysis with lightweight heuristics for reliable results, runs fully serverless for low cost and zero ops
 
 ## Demo

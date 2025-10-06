@@ -162,15 +162,15 @@ html, body {
 
   .cloud-frame::before {
     background-size:
-      80px 80px,
-      calc(100% - 120px) 60px,
-      80px 80px,
-      40px calc(100% - 120px),
+      80px 100px,
+      calc(100% - 120px) 30px,
+      80px 100px,
+      20px calc(100% - 200px),
       calc(100% - 120px) calc(100% - 120px),
-      40px calc(100% - 120px),
-      80px 80px,
-      calc(100% - 120px) 60px,
-      80px 80px;
+      20px calc(100% - 200px),
+      80px 100px,
+      calc(100% - 120px) 30px,
+      80px 100px;
   }
 
   .cloud-card {
